@@ -1,6 +1,6 @@
 #include "HTree.h"
 
-void HTree::setCodes(Code *codes, unsigned long code = 0, unsigned short depth = 0)
+void HTree::setCodes(Code *codes, unsigned long code, unsigned short depth)
 {
     if (children[0] == nullptr && children[1] == nullptr)
     {
