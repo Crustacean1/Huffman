@@ -3,6 +3,10 @@
 
 #include <iostream>
 #include <cstring>
+#include <vector>
+#include "HTree.h"
+
+std::vector<HTree *> mergeSort(std::vector<HTree *> tosort);
 
 class Huffman
 {

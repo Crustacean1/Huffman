@@ -7,6 +7,8 @@ struct Code
     unsigned long code;
 }; //Throws exception >32
 
+
+
 class HTree
 {
     unsigned int frequency;

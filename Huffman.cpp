@@ -1,39 +1,42 @@
 #include "Huffman.h"
-#include "HTree.h"
-#include <vector>
 
-std::vector<HTree *> &merge(std::vector<HTree *> &_a, std::vector<HTree *>& _b)
+std::vector<HTree *> * merge(std::vector<HTree *> a, std::vector<HTree *> b)
 {
-    std::vector<HTree*> & a = (_a.size()>_b.size())?_a:_b;//bigger
-    std::vector<HTree*> & b = (_a.size()>_b.size())?_b:_a;//smaller
-    std::vector<HTree *> c;
+    std::vector<HTree *> * c = new std::vector<HTree*>();
 
     auto ita = a.begin();
     auto itb = b.begin();
-
-    for (;ita!=a.end();)
+    
+    for (;ita!=a.end()&&itb!=b.end();)
     {
-        if (itb!=b.end()&&*ita > *itb)
+        if (itb!=b.end()&& (*ita)->getFrequency() > (*itb)->getFrequency())
         {
-            c.push_back(*(itb++));
+            (*c).push_back(*(itb++));
             continue;
         }
-        c.push_back(*(ita++));
+        (*c).push_back(*(ita++));
     }
+
     for(;ita!=a.end();)
     {
-        c.push_back(*(ita++));
+        (*c).push_back(*(ita++));
     }
+    for(;itb!=b.end();)
+    {
+        (*c).push_back(*(itb++));
+    }
+
+    std::cout<<"after"<<c->size()<<std::endl;
     return c;
 }
 
-std::vector<HTree *> & mergeSort(std::vector<HTree *> &tosort)
+std::vector<HTree *> mergeSort(std::vector<HTree *> tosort)
 {
     if (tosort.size() == 1)
     {
         return tosort;
     }
-    return merge(mergeSort(std::vector<HTree*>(tosort.begin(),tosort.begin()+tosort.size()/2)),
+    return *merge(mergeSort(std::vector<HTree*>(tosort.begin(),tosort.begin()+tosort.size()/2)),
      mergeSort(std::vector<HTree*>(tosort.begin()+tosort.size()/2,tosort.end())));
 }
 
