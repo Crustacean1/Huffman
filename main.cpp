@@ -13,6 +13,8 @@ void Compress(std::unordered_map<std::string,std::string> args)
     std::string inp = input.read();
     
     Huffman huf(&inp);
+    std::cout<<"Computed entropy: "<<huf.getEntropy()<<"\t Entropy per character: "<<huf.getEntropyPerChar()<<std::endl;
+    huf.compress();
 }
 void Decompress(std::unordered_map<std::string,std::string> args)
 {
@@ -33,18 +35,6 @@ int main(int argc,char ** argv)
     test.push_back(new HTree('a',13));
     test.push_back(new HTree('a',17));
     test.push_back(new HTree('a',0));
-
-    for(auto t:test)
-    {
-        std::cout<<t->getFrequency()<<std::endl;
-    }
-    std::cout<<"after sort: "<<std::endl;
-
-    auto result = mergeSort(test);
-    for(auto t:result)
-    {
-        std::cout<<t->getFrequency()<<std::endl;
-    }
 
     try{
     Parser parser;

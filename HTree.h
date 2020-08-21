@@ -26,6 +26,7 @@ public:
     }
     HTree(unsigned char _me, unsigned int _freq) : me(_me), frequency(_freq) {}
     unsigned int getFrequency(){return frequency;}
+    char getChar(){return (char)me;}
 
     void setCodes(Code *codes, unsigned long code = 0, unsigned short depth = 0);
 };
