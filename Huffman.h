@@ -21,7 +21,7 @@ class Huffman
 
     HTree * createTree();
     void createCodes();
-    
+
     bool verbose = false;
 
 public:
@@ -50,6 +50,8 @@ public:
         entropyPerChar = -entropy;
     }
     Huffman(){}
+
+    void setVerbose(bool _verbose){verbose=_verbose;}
 
     std::string compress();
     std::string decompress();

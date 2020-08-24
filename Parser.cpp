@@ -9,6 +9,7 @@ void Parser::parse(int argc, char **argv)
         if (argv[i][0] == '-')
         {
             last = argv[i];
+            if(options[last]!=""){throw "Too many commands";}
             options[last] = "1";
             continue;
         }

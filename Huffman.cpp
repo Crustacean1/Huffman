@@ -64,27 +64,23 @@ void Huffman::createCodes()
 std::string Huffman::compress()
 {
     createCodes();
-    for (int i = 0; i < 256; i++)
-    {
-        std::cout << (char)i << "\t" << i << "\t" << codes[i].length << "\t";
-        for (int j = 0; j < codes[i].length; j++)
-        {
-            std::cout << ((codes[i].code >> j) & (unsigned int)1);
-        }
-        std::cout << std::endl;
-    }
     std::string res;
     unsigned long int t = 0;
 
-    int length = 0;
+    long long int length = 0;
 
-    for (int i = 0; i < source->size();)
+    for (int i = 0; i <= source->size();)
     {
         for (; length < 9; i++)
         {
-            if (!(i < source->size()))
+            if (!(i <= source->size()))
             {
-                res += (char)(t & ((unsigned int)pow(2, length) - 1));
+                while (length >= 0)
+                {
+                    res += (unsigned char)(t & 255);
+                    t = t >> 8;
+                    length -= 8;
+                }
                 break;
             }
             t += codes[(unsigned char)(*source)[i]].code * pow(2, length);
@@ -102,9 +98,22 @@ std::string Huffman::compress()
     tSize = serializeSize(htree.size());
     sSize = serializeSize(source->size());
 
-    std::cout << "compressed tree size: " << deserializeSize(tSize) << std::endl;
-    std::cout << "pre-compressed text size: " << deserializeSize(sSize) << std::endl;
-    std::cout << "compressed to: " << res.size() << std::endl;
+    if (verbose)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            std::cout << "\t" << i << "\t" << codes[i].length << "\t";
+            for (int j = 0; j < codes[i].length; j++)
+            {
+                std::cout << ((codes[i].code >> j) & (unsigned int)1);
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "compressed tree size: " << deserializeSize(tSize) << std::endl;
+    }
+    std::cout << "data: " << (int)(unsigned char)(*source)[source->size() - 1] << std::endl;
+    debugString(res.substr(res.size() - 5, 5));
+    std::cout<<(int)(unsigned char)res[res.size()-1]<<std::endl;
 
     return tSize + htree + sSize + res;
 }
@@ -130,7 +139,7 @@ std::string Huffman::decompress()
     {
         for (int i = 0; i < 256; i++)
         {
-            std::cout << (char)i << "\t" << i << "\t" << codes[i].length << "\t";
+            std::cout << "\t" << i << "\t" << codes[i].length << "\t";
             for (int j = 0; j < codes[i].length; j++)
             {
                 std::cout << ((codes[i].code >> j) & (unsigned int)1);
@@ -147,6 +156,8 @@ std::string Huffman::decompress()
     {
         res += tree->getCode(data, pos);
     }
+    debugString(data.substr(data.size() - 5, 5));
+    std::cout << std::endl;
 
     return res;
 }
