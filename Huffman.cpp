@@ -131,8 +131,9 @@ std::string Huffman::compress()
         var1+=sSize[i]<<8*(sSize.size()-1-i);
     }
     std::cout<<var1<<std::endl;
-    std::cout<<"size size: "<<tSize.size()<<" "<<sSize.size()<<std::endl;
-    std::cout<<"tree size: "<<deserializeSize(tSize)<<std::endl;
+    std::cout<<"compressed to: "<<res.size()<<std::endl;
+    //std::cout<<"size size: "<<tSize.size()<<" "<<sSize.size()<<std::endl;
+    //std::cout<<"tree size: "<<deserializeSize(tSize)<<std::endl;
     
     return tSize+htree+sSize+res;
 }

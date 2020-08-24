@@ -4,6 +4,8 @@
 #include "MyFile.h"
 #include "HTree.h"
 
+//Entropy above 7.5 is inefficient
+
 void Compress(std::unordered_map<std::string,std::string> args)
 {
     if(args["-input"]==""){throw "Input path required";}
