@@ -17,6 +17,7 @@ std::string serializeSize(unsigned long long int size)
     std::string res;
     for(int i = sizeof(unsigned long long int)-1;i>=0;i--)
     {
+        //std::cout<<"serialization: "<<(int)((size>>i*8)&255)<<std::endl;
         res+=(char)((size>>i*8)&255);
     }
     return res;
@@ -24,13 +25,14 @@ std::string serializeSize(unsigned long long int size)
 
 unsigned long long int deserializeSize(std::string data)
 {
-    unsigned long long int size;
+    unsigned long long int sizey = 0;
     for(int i = 0;i<sizeof(unsigned long long int);i++)
     {
-        size = size<<8;
-        size+=data[i];
+        //std::cout<<"sizey: "<<(int)data[i]<<std::endl;
+        sizey = sizey<<8;
+        sizey+=(unsigned char)data[i];
     }
-    return size;
+    return sizey;
 }
 
 
@@ -105,18 +107,22 @@ std::string Huffman::compress()
     std::string sSize;
 
     tSize = serializeSize(htree.size());
+    //std::cout<<"break"<<std::endl;
     sSize = serializeSize(source->size());
 
-    std::cout<<"compressed tree size: "<<std::endl;
+    std::cout<<"compressed tree size: "<<htree.size()<<std::endl;
     
     unsigned long long int var1 = 0;
 
     for(int i = 0;i<tSize.size();i++)
     {
-        var1+=tSize[i]<<8*(tSize.size()-1-i);
+        var1 = var1<<8;
+        var1+=(unsigned char)tSize[i];
+        //std::cout<<"data : "<<(int)tSize[i]<<std::endl;
     }
 
-    std::cout<<var1<<std::endl;
+    //std::cout<<var1<<std::endl;
+    //std::cout<<deserializeSize(tSize)<<std::endl;
     std::cout<<"pre-compressed text size: "<<std::endl;
     var1 = 0;
 
@@ -130,7 +136,7 @@ std::string Huffman::compress()
     
     return tSize+htree+sSize+res;
 }
-
+///////////////////////////////////////////////////////////////////////////////////
 std::string Huffman::decompress()
 {
     std::cout<<"general size: "<<source->size()<<std::endl;
