@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cstring>
 #include <math.h>
+#include "HTree.h"
+
+void debugString(std::string data);
 
 class Huffman
 {
@@ -13,9 +16,19 @@ class Huffman
     unsigned long int sum = 0;
     float entropyPerChar = 0;
 
+    Code * codes;
+    HTree *tree;
+
+    HTree * createTree();
+    void createCodes();
+
 public:
-    Huffman(std::string *_source) : source(_source)
+    Huffman(std::string *_source,bool compress = true) : source(_source)
     {
+        if(!compress)
+        {
+            return;
+        }
         memset(frequencies, 0, 256 * sizeof(unsigned int));
         for (auto a : *_source)
         {
@@ -34,8 +47,11 @@ public:
         }
         entropyPerChar = -entropy;
     }
+    Huffman(){}
 
     std::string compress();
+    std::string decompress();
+    
     float getEntropy();
     float getEntropyPerChar() { return entropyPerChar; }
 
@@ -46,6 +62,9 @@ public:
             std::cout << (char)i << "\t" << frequencies[i] << std::endl;
         }
     }
+
+    std::string serialize();
+    HTree* load(std::string &data);
 };
 
 #endif /*HUFFMAN*/

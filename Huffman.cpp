@@ -1,100 +1,187 @@
 #include "Huffman.h"
-#include <vector>
-#include "HTree.h"
 
-std::vector<HTree *> *merge(std::vector<HTree *> *a, std::vector<HTree *> *b)
+void debugString(std::string data)
 {
-    std::vector<HTree *> *c = new std::vector<HTree *>();
-
-    auto ita = a->begin();
-    auto itb = b->begin();
-
-    for (; ita != a->end() && itb != b->end();)
+    for(int i =0;i<data.size();i++)
     {
-        if (itb != b->end() && (*ita)->getFrequency() > (*itb)->getFrequency())
+        for(int j = 0;j<8;j++)
         {
-            (*c).push_back(*(itb++));
-            continue;
+            std::cout<<((data[i]>>j)&1);
         }
-        (*c).push_back(*(ita++));
+        std::cout<<" ";
     }
-
-    for (; ita != a->end();)
-    {
-        (*c).push_back(*(ita++));
-    }
-    for (; itb != b->end();)
-    {
-        (*c).push_back(*(itb++));
-    }
-
-    delete a;
-    delete b;
-
-    return c;
 }
 
-std::vector<HTree *> *mergeSort(std::vector<HTree *> *tosort)
+std::string serializeSize(unsigned long long int size)
 {
-    if (tosort->size() == 1)
+    std::string res;
+    for(int i = sizeof(unsigned long long int)-1;i>=0;i--)
     {
-        return tosort;
+        res+=(char)((size>>i*8)&255);
     }
-    return merge(mergeSort(new std::vector<HTree *>(tosort->begin(), tosort->begin() + tosort->size() / 2)),
-                 mergeSort(new std::vector<HTree *>(tosort->begin() + tosort->size() / 2, tosort->end())));
+    return res;
 }
 
-void vectorInsert(std::vector<HTree *> *vec, HTree **el)
+unsigned long long int deserializeSize(std::string data)
 {
-    auto it = vec->begin();
-    for (; it != vec->end(); it++)
+    unsigned long long int size;
+    for(int i = 0;i<sizeof(unsigned long long int);i++)
     {
-        if ((*el)->getFrequency() < (*it)->getFrequency())
-        {
-            break;
-        }
+        size = size<<8;
+        size+=data[i];
     }
-    vec->insert(it, *el);
+    return size;
 }
+
 
 float Huffman::getEntropy()
 {
     return entropyPerChar * sum;
 }
 
+HTree *Huffman::createTree()
+{
+    return new HTree(frequencies, 256);
+}
+
+void Huffman::createCodes()
+{
+    HTree * test = createTree();
+    std::string temp = test->serialize();
+    //std::cout<<"serialized: "<<temp.size()<<std::endl;
+    //tree = test;
+
+    tree = new HTree((unsigned char)0,(unsigned long)0);
+    //std::cout<<"???"<<std::endl;
+    tree->construct(temp);
+    //std::cout<<"constructed, coding"<<std::endl;
+    codes = new Code[256];
+    memset(codes,0,sizeof(Code)*256);
+    tree->setCodes(codes);
+}
+
 std::string Huffman::compress()
 {
-    std::vector<HTree *> letters;
+    createCodes();
     for (int i = 0; i < 256; i++)
     {
-        if (frequencies[i] != 0)
+        std::cout << (char)i << "\t" << i << "\t" << codes[i].length<<"\t";
+        for(int j = 0;j<codes[i].length;j++)
         {
-            letters.push_back(new HTree((unsigned char)i, frequencies[i]));
+            std::cout<<((codes[i].code>>j)&(unsigned int)1);
         }
+        std::cout<<std::endl;
     }
-    letters = *mergeSort(&letters);
-    for (auto i : letters)
-    {
-        std::cout << i->getChar() << "\t" << i->getFrequency() << std::endl;
-    }
-    std::cout<<"break;"<<std::endl;
-    while (letters.size() != 1)
-    {
-        HTree *ptr = new HTree(letters[0], letters[1]);
-        letters.erase(letters.begin());
-        letters.erase(letters.begin());
+    std::string res;
+    unsigned long int t = 0;
 
-        vectorInsert(&letters, &ptr);
-        /*for (auto i : letters)
-        {
-            std::cout << (int)i->getChar() << "\t" << i->getFrequency() << std::endl;
-        }
-        break;*/
-    }
-    Code * codes = new Code[256];
-    letters[0]->setCodes(codes);
-    for(int i = 0;i<256;i++)
+    int length =0;
+    
+    for (int i = 0; i < source->size();)
     {
-        std::cout<<(char)i<<"\t"<<i<<"\t"<<codes[i].length<<std::endl;
+        for (; length < 9; i++)
+        {
+            if (!(i < source->size()))
+            {
+                //std::cout<<k<<"\t"<<i<<"\t"<<(k+i)<<"\t"<<source->size()<<std::endl;
+                res += (char)(t & ((unsigned int)pow(2, length) - 1));
+                break;
+            }
+            //std::cout<<"\t"<<(int)(*source)[i+k]<<" "<<(unsigned char)(*source)[i+k]<<" length: "<<codes[(unsigned char)(*source)[i+k]].length<<"\t"<<source->size()<<"\t"<<i+k<<std::endl;
+            t += codes[(unsigned char)(*source)[i]].code * pow(2,length);
+            length+=codes[(unsigned char)(*source)[i]].length;
+            //std::cout<<"\tińńer lóóþ\t"<<(*source)[i]<<"\t"<<(int)codes[(unsigned char)(*source)[i]].code<<std::endl;
+        }
+        //std::cout<<t<<std::endl;
+        res += (unsigned char)(t & 255);
+        t = t>>8;
+        length-=8;
+        //debugString(res);
+        //std::cin.get();
     }
+
+    std::string htree = tree->serialize();
+    std::string tSize;
+    std::string sSize;
+
+    tSize = serializeSize(htree.size());
+    sSize = serializeSize(source->size());
+
+    std::cout<<"compressed tree size: "<<std::endl;
+    
+    unsigned long long int var1 = 0;
+
+    for(int i = 0;i<tSize.size();i++)
+    {
+        var1+=tSize[i]<<8*(tSize.size()-1-i);
+    }
+
+    std::cout<<var1<<std::endl;
+    std::cout<<"pre-compressed text size: "<<std::endl;
+    var1 = 0;
+
+    for(int i = 0;i<sSize.size();i++)
+    {
+        var1+=sSize[i]<<8*(sSize.size()-1-i);
+    }
+    std::cout<<var1<<std::endl;
+    std::cout<<"size size: "<<tSize.size()<<" "<<sSize.size()<<std::endl;
+    std::cout<<"tree size: "<<deserializeSize(tSize)<<std::endl;
+    
+    return tSize+htree+sSize+res;
+}
+
+std::string Huffman::decompress()
+{
+    std::cout<<"general size: "<<source->size()<<std::endl;
+    unsigned long long int tSize,sSize;
+    tSize = deserializeSize(*source);
+    std::cout<<"tree size: "<<tSize<<std::endl;
+    
+    tree = new HTree((unsigned char)0,(unsigned int)0);
+
+    std::string treeSource = source->substr(8,tSize);
+
+    std::cout<<"before construction"<<std::endl;
+
+    tree->construct(treeSource);
+    std::cout<<"after construction"<<std::endl;
+    
+    sSize = deserializeSize(source->substr(8+tSize,8));
+
+    std::cout<<"prev size: "<<sSize<<std::endl;
+
+    codes = new Code[256];
+    memset(codes,0,sizeof(Code)*256);
+
+    tree->setCodes(codes);
+
+    for (int i = 0; i < 256; i++)
+    {
+        std::cout << (char)i << "\t" << i << "\t" << codes[i].length<<"\t";
+        for(int j = 0;j<codes[i].length;j++)
+        {
+            std::cout<<((codes[i].code>>j)&(unsigned int)1);
+        }
+        std::cout<<std::endl;
+    }
+    unsigned int pos = 0;
+    std::string data = source->substr(16+tSize,source->size()-16-tSize);
+    std::string res;
+
+    //tree->Debug();
+    //debugString(data);
+    //return "";
+    //std::cout<<std::endl;
+    std::cout<<"prepared"<<std::endl;
+    for(unsigned long long int i = 0;i<sSize;i++)
+    {
+        //std::cout<<"start"<<tree->getCode(data,pos)<<std::endl;
+        //std::cin.get();
+        res+=tree->getCode(data,pos);
+    }
+    //std::cout<<"FIN"<<std::endl;
+    //std::cout<<res<<std::endl;
+    //std::cout<<res.size()<<std::endl;
+    return res;
 }
