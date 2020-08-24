@@ -21,6 +21,8 @@ class Huffman
 
     HTree * createTree();
     void createCodes();
+    
+    bool verbose = false;
 
 public:
     Huffman(std::string *_source,bool compress = true) : source(_source)

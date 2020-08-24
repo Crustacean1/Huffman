@@ -115,9 +115,6 @@ std::string HTree::serialize()
 }
 int HTree::construct(std::string &data, int pos)
 {
-    //std::cout << "AAA:" << me << std::endl;
-    //std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << std::endl;
-    //std::cout<<pos<<" "<<data.size()<<std::endl;
     if(pos>=data.size()){throw "Size exceeded";}
     
     if (data[pos] == (char)1)
@@ -133,19 +130,15 @@ int HTree::construct(std::string &data, int pos)
 }
 unsigned char HTree::getCode(std::string &data, unsigned int &pos)
 {
-    //std::cout << (int)me << "o" << (((unsigned char)data[pos / 8] >> (pos % 8)) & (unsigned char)1) << std::endl;
     if (children[0] == nullptr && children[1] == nullptr)
     {
         return me;
     }
     if ((((unsigned char)data[pos / 8] >> (pos % 8)) & (unsigned char)1) == 0)
     {
-        //std::cout << "left" << std::endl;
         pos++;
         return children[0]->getCode(data, pos);
     }
-
-    //std::cout << "right" << std::endl;
     pos++;
     return children[1]->getCode(data, pos);
 }
