@@ -25,7 +25,7 @@ void Compress(std::unordered_map<std::string, std::string> args)
     std::string comp = huf.compress();
     if (args["-v"] == "1")
     {
-        std::cout << "Computed entropy: " << huf.getEntropy() << "\t Entropy per character: " << huf.getEntropyPerChar() << std::endl;
+        std::cout << "Computed entropy: " << huf.getEntropy() << "\t Entropy per character: " << huf.getEntropyPerChar() << "\t optimization: " << huf.getEntropyPerChar() / 8.f << std::endl;
         std::cout << "before compression: " << inp.size() << std::endl;
         std::cout << "compressed to: " << comp.size() << std::endl;
     }
@@ -65,7 +65,7 @@ void Entropy(std::unordered_map<std::string, std::string> args)
     std::string inp = input.read();
 
     Huffman huf(&inp);
-    std::cout << "Computed entropy: " << huf.getEntropy() << "\t Entropy per character: " << huf.getEntropyPerChar() << std::endl;
+    std::cout << "Computed entropy: " << huf.getEntropy() << "\t Entropy per character: " << huf.getEntropyPerChar() << "\t optimization: " << huf.getEntropyPerChar() / 8.f << std::endl;
 }
 
 void IdentityCheck(std::string _a, std::string _b)
@@ -83,8 +83,8 @@ void IdentityCheck(std::string _a, std::string _b)
     {
         if (sa[i] != sb[i])
         {
-            std::cout << (int)(unsigned char)sa[i-2] << "\t" << (int)(unsigned char)sb[i-2] << std::endl;
-            std::cout << (int)(unsigned char)sa[i-1] << "\t" << (int)(unsigned char)sb[i-1] << std::endl;
+            std::cout << (int)(unsigned char)sa[i - 2] << "\t" << (int)(unsigned char)sb[i - 2] << std::endl;
+            std::cout << (int)(unsigned char)sa[i - 1] << "\t" << (int)(unsigned char)sb[i - 1] << std::endl;
             std::cout << (int)(unsigned char)sa[i] << "\t" << (int)(unsigned char)sb[i] << std::endl;
             std::cout << "line: " << i << std::endl;
             std::cin.get();
@@ -92,15 +92,11 @@ void IdentityCheck(std::string _a, std::string _b)
     }
     std::cout << sa.size() << "\t" << sb.size() << std::endl;
 }
-/*
-TODO:
- - File identicity check
- - improved tree traversal during compression
-*/
 
 int main(int argc, char **argv)
 {
-    //IdentityCheck("test/matura.png", "test/matura1.png");
+    //if(argc<3){return -1;}
+    //IdentityCheck(argv[1],argv[2]);
     //return 0;
     std::unordered_map<std::string, void (*)(std::unordered_map<std::string, std::string>)> commands;
     commands["compress"] = Compress;

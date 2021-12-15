@@ -111,9 +111,9 @@ std::string Huffman::compress()
         }
         std::cout << "compressed tree size: " << deserializeSize(tSize) << std::endl;
     }
-    std::cout << "data: " << (int)(unsigned char)(*source)[source->size() - 1] << std::endl;
-    debugString(res.substr(res.size() - 5, 5));
-    std::cout<<(int)(unsigned char)res[res.size()-1]<<std::endl;
+    //std::cout << "data: " << (int)(unsigned char)(*source)[source->size() - 1] << std::endl;
+    //debugString(res.substr(res.size() - 5, 5));
+    //std::cout<<(int)(unsigned char)res[res.size()-1]<<std::endl;
 
     return tSize + htree + sSize + res;
 }
@@ -156,8 +156,8 @@ std::string Huffman::decompress()
     {
         res += tree->getCode(data, pos);
     }
-    debugString(data.substr(data.size() - 5, 5));
-    std::cout << std::endl;
+    //debugString(data.substr(data.size() - 5, 5));
+    //std::cout << std::endl;
 
     return res;
 }
