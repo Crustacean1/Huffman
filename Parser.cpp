@@ -1,10 +1,8 @@
 #include "Parser.h"
 void Parser::parse(int argc, char **argv)
 {
-    auto it = command.begin();
-
     std::string last = "";
-    for (unsigned int i = 1; i < argc; i++)
+    for (unsigned char i = 1; i < argc; i++)
     {
         if (argv[i][0] == '-')
         {

@@ -79,7 +79,7 @@ void IdentityCheck(std::string _a, std::string _b)
     {
         std::cout << "different sizes" << std::endl;
     }
-    for (int i = 0; i < sa.size(); i++)
+    for (unsigned int i = 0; i < sa.size(); i++)
     {
         if (sa[i] != sb[i])
         {

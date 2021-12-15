@@ -115,7 +115,7 @@ std::string HTree::serialize()
 }
 int HTree::construct(std::string &data, int pos)
 {
-    if(pos>=data.size()){throw "Size exceeded";}
+    if((unsigned int)pos>=data.size()){throw "Size exceeded";}
     
     if (data[pos] == (char)1)
     {

@@ -27,7 +27,7 @@ public:
         frequency = children[0]->frequency + children[1]->frequency;
         me = 0;
     }
-    HTree(unsigned char _me, unsigned int _freq) : me(_me), frequency(_freq) {}
+    HTree(unsigned char _me, unsigned int _freq) : frequency(_freq), me(_me) {}
     HTree(unsigned int * _freq, int _size){construct(_freq,_size);}
 
     void construct(unsigned int * frequency, int size);

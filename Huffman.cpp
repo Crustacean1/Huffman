@@ -2,9 +2,9 @@
 
 void debugString(std::string data)
 {
-    for (int i = 0; i < data.size(); i++)
+    for (unsigned int i = 0; i < data.size(); i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (unsigned int j = 0; j < 8; j++)
         {
             std::cout << ((data[i] >> j) & 1);
         }
@@ -26,7 +26,7 @@ std::string serializeSize(unsigned long long int size)
 unsigned long long int deserializeSize(std::string data)
 {
     unsigned long long int sizey = 0;
-    for (int i = 0; i < sizeof(unsigned long long int); i++)
+    for (unsigned int i = 0; i < sizeof(unsigned long long int); i++)
     {
         //std::cout<<"sizey: "<<(int)data[i]<<std::endl;
         sizey = sizey << 8;
@@ -69,7 +69,7 @@ std::string Huffman::compress()
 
     long long int length = 0;
 
-    for (int i = 0; i <= source->size();)
+    for (unsigned int i = 0; i <= source->size();)
     {
         for (; length < 9; i++)
         {
